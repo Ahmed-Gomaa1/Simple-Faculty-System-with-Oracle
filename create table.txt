@@ -1,0 +1,128 @@
+create table ADDRESS (
+CountryID number( 5 )
+constraint Co11PK primary key,
+Country_name varchar2( 20 )
+constraint Co123Un unique
+not null) ;
+create table City(
+CityID number( 5 )
+constraint Ci121PK primary key,
+CountryID number( 5 )
+constraint Cu42FK references ADDRESS( CountryID ) on delete cascade 
+not null,
+City_name varchar2( 20 )
+constraint Ci323Un unique 
+not null
+) ;
+create table STD_INFO ( 
+StdID number( 12 ) 
+constraint stPK primary key,
+FirstName varchar2( 20 ) 
+not null,
+LastName varchar2( 20 ) 
+not null,
+Gender varchar( 6 ) 
+constraint geCk check( lower(Gender) in ( 'male' , 'female' ) )
+not null,
+Nationality varchar2( 20 )
+not null,
+NationalID varchar2( 14 )
+constraint NAUN unique
+not null,
+BirthDate date 
+not null,
+CityID number 
+constraint CiFK references City( CITYID  ) on delete cascade  
+not null ) ;
+create table STD_TEL(
+StdID number( 12 ) 
+constraint StFK references STD_INFO( STDID )on delete cascade  
+not null,
+Phone varchar2( 11 )
+constraint PhCK check ( phone like ( '01%' ) ) 
+not null );
+create table DEPARTMENTS(
+DepartmentID number( 2 ) 
+constraint DePK primary key, 
+Name varchar2( 50 ) 
+not null,
+NumberOfTA number( 3 ),
+NumberOfSTD number( 5 ) );
+create table STD_COLLEGE(
+StdID number( 5 )
+constraint St1PK primary key,
+Year number( 2 )
+constraint YeCK check( Year >= 1 and year <= 4 ),
+DepartmentID number( 2 )
+constraint DeFK references DEPARTMENTS( DepartmentID )on delete cascade 
+not null,
+Status varchar2( 20 ) ) ;
+create table TEACHING_ASSISTANTS(
+JobID number( 5 ) 
+constraint JoPK primary key,
+Title varchar2( 15 ) 
+not null,
+FirstName varchar2( 20 )
+not null,
+LastName varchar2( 20 ) 
+not null,
+CityID number( 5 ) 
+constraint Ci1FK references City( CityID ) on delete cascade 
+not null,
+DepartmentID number( 2 )
+constraint De2FK references DEPARTMENTS( DepartmentID ) on delete cascade 
+not null,
+HiringDate date 
+not null );
+create table OfficeHours(
+JobID number( 5 )
+constraint Jo122FK references TEACHING_ASSISTANTS( JobID ) on delete cascade 
+not null,
+Office_hours varchar2( 20 )
+not null ) ;
+create table TA_TEL(
+JobID number( 5 ) 
+constraint Jo1FK references TEACHING_ASSISTANTS( JobID ) on delete cascade 
+not null,
+Phone varchar2( 11 )
+constraint PhCh check( phone like( '01%' ) ) 
+not null
+);
+create table TA_EMAIL(
+JobID number( 5 ) 
+constraint Jo2FK references TEACHING_ASSISTANTS( JobID ) on delete cascade 
+not null,
+EMAIL varchar2( 100 )
+constraint EmCh check( EMAIL like( '%@%' ) ) 
+not null
+);
+create table SUBJECTS(
+SubjectID number( 5 )
+constraint SuPK primary key,
+Name varchar2( 20 )
+not null,
+DepartmentID number( 2 )
+constraint De3FK references DEPARTMENTS( DepartmentID ) on delete cascade 
+not null,
+NumberOfHours number( 3 )
+not null
+constraint Nu2CK check( NumberOfHours between 0 and 600 ),
+TotalDegree number( 3 )
+not null 
+constraint ToCk check ( TotalDegree between 0 and 1000) ) ;
+create table TEACHES(
+JobID number( 5 )
+constraint Jo5FK references TEACHING_ASSISTANTS( JobID ) on delete cascade 
+not null,
+SubjectID number( 5 ) 
+constraint Su5FK references SUBJECTS(SubjectID) on delete cascade  
+not null )  ;
+create table TAKES(
+StdID number( 12 )
+constraint St4FK references STD_INFO( StdID ) on delete cascade  
+not null,
+SubjectID number( 5 )
+constraint Su7FK references SUBJECTS( SubjectID ) on delete cascade  
+not null,
+Degree number( 3 )
+constraint DeCK check ( Degree between 0 and 1000 ) ) ;
